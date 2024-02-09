@@ -8,7 +8,7 @@ var app = express();
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
-app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
+app.use(cors({ optionsSuccessStatus: 200 }));  // some legacy browsers choke on 204
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -19,21 +19,36 @@ app.get("/", function (req, res) {
 });
 
 
-// your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/timestamp", (req, res) => {
+  let date = new Date();
+
+  return res.json({
+    'unix': date.getTime(),
+    'utc': date.toUTCString()
+  });
 });
 
-// Dentro de tu manejo de ruta del servidor
-app.get('/api/:date?', (req, res) => {
-  const dateString = req.params.date || '';
-  const date = dateString ? new Date(dateString) : new Date();
+app.get("/api/timestamp/:date", (req, res) => {
+  let resultDate = '';
 
-  if (!isNaN(date.getTime())) {
-    res.json({ unix: date.getTime(), utc: date.toUTCString() });
-  } else {
-    res.json({ error: 'Fecha inválida' });
+  let inputDate = new Date(req.params.date);
+
+  if (inputDate.toString() == "Invalid Date") {
+    //convert from unix date to normal date
+    inputDate = new Date(parseInt(req.params.date));
+    // console.log(inputDate, "Invalid Date");
   }
+
+  if (inputDate.toString() == "Invalid Date") {
+    return res.json({ error: "Invalid Date" });
+  } else {
+    resultDate = {
+      unix: inputDate.getTime(),
+      utc: inputDate.toUTCString()
+    };
+    // console.log(resultDate);
+  }
+  return res.json(resultDate);
 });
 
 
