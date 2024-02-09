@@ -8,7 +8,7 @@ var app = express();
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
-app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
+app.use(cors({ optionsSuccessStatus: 200 }));  // some legacy browsers choke on 204
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -21,29 +21,21 @@ app.get("/", function (req, res) {
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+  res.json({ greeting: 'hello API' });
 });
 
-app.get('/api/timestamp/:date_string?', (req, res) => {
-  const dateString = req.params.date_string;
-  let date;
+// Dentro de tu manejo de ruta del servidor
+app.get('/api/:date?', (req, res) => {
+  const dateString = req.params.date || '';
+  const date = dateString ? new Date(dateString) : new Date();
 
-  if (!dateString) {
-    date = new Date();
-  } else {
-    if (/^\d+$/.test(dateString)) {
-      date = new Date(parseInt(dateString));
-    } else {
-      date = new Date(dateString);
-    }
-  }
-
-  if (isNaN(date.getTime())) {
-    res.json({ error: 'Invalid Date' });
-  } else {
+  if (!isNaN(date.getTime())) {
     res.json({ unix: date.getTime(), utc: date.toUTCString() });
+  } else {
+    res.json({ error: 'Fecha inválida' });
   }
 });
+
 
 
 // listen for requests :)
