@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timestamp Microservice</title>
+</head>
+
+<body>
+    <h1>Timestamp Microservice</h1>
+    <p>Enter a date or leave it blank for the current timestamp:</p>
+    <input type="text" id="dateInput" placeholder="Enter date">
+    <button onclick="getTimestamp()">Get Timestamp</button>
+    <div id="result"></div>
+
+    <script>
+        async function getTimestamp() {
+            const dateInput = document.getElementById('dateInput').value;
+            const response = await fetch(`/api/timestamp/${dateInput}`);
+            const data = await response.json();
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<p>Unix Timestamp: ${data.unix}</p><p>UTC Timestamp: ${data.utc}</p>`;
+        }
+    </script>
+</body>
+
+</html>
