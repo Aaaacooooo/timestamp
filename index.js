@@ -27,12 +27,15 @@ app.get("/api/hello", function (req, res) {
 
 // Dentro de tu manejo de ruta del servidor
 app.get('/api/:date?', (req, res) => {
-  const dateString = new Date(req.params.date);
+  let date = new Date(req.params.date);
 
-  if (isInvalidDate(dateString)) {
+  // Check if date is invalid, then try parsing without new Date()
+  if (isInvalidDate(date)) {
     date = new Date(req.params.date);
   }
-  if (isInvalidDate(dateString)) {
+
+  // Check again if date is still invalid
+  if (isInvalidDate(date)) {
     res.json({ error: 'Fecha inválida' });
     return;
   }
@@ -40,11 +43,14 @@ app.get('/api/:date?', (req, res) => {
   res.json({ unix: date.getTime(), utc: date.toUTCString() });
 });
 
+// Use a default value if req.params.date is empty
 app.get("/api", (req, res) => {
+  const date = new Date();
   res.json({
-    unix: new Date().getTime(), utc: new Date().toUTCString()
-  })
-})
+    unix: date.getTime(), utc: date.toUTCString()
+  });
+});
+
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
